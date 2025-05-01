@@ -14,7 +14,8 @@ import {
   ResponsiveContainer,
   Area,
   ComposedChart,
-  Bar
+  Bar,
+  BarChart
 } from 'recharts';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -72,10 +73,19 @@ const ForecastPlot: React.FC<ForecastPlotProps> = ({ forecastData, cityName }) =
     : processedData.filter(d => d.model === model);
 
   // Helper function to determine bar color based on error
-  const getErrorColor = (d: any) => {
-    const error = (d.predicted || 0) - (d.actual || 0);
+  const getErrorColor = (error: number) => {
     return error > 0 ? "#f87171" : "#60a5fa";
   };
+
+  // Prepare error data for the bar chart
+  const errorData = historicalData.map(item => {
+    const error = (item.predicted || 0) - (item.actual || 0);
+    return {
+      dateTime: item.dateTime,
+      error: error,
+      fill: getErrorColor(error)
+    };
+  });
 
   return (
     <Card className="animate-fade-in">
@@ -192,7 +202,7 @@ const ForecastPlot: React.FC<ForecastPlotProps> = ({ forecastData, cityName }) =
           
           <TabsContent value="errors" className="h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={historicalData}>
+              <BarChart data={errorData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="dateTime" 
@@ -216,21 +226,14 @@ const ForecastPlot: React.FC<ForecastPlotProps> = ({ forecastData, cityName }) =
                   }}
                 />
                 <Legend />
-                
-                {historicalData.map((entry, index) => {
-                  const error = (entry.predicted || 0) - (entry.actual || 0);
-                  const fillColor = error > 0 ? "#f87171" : "#60a5fa";
-                  return (
-                    <Bar 
-                      key={index}
-                      dataKey={(d) => ((d.predicted || 0) - (d.actual || 0))} 
-                      name="Error" 
-                      fill={fillColor}
-                      data={[entry]}
-                    />
-                  );
-                })}
-              </ComposedChart>
+                <Bar 
+                  dataKey="error"
+                  name="Error" 
+                  fill="#8884d8"
+                  stroke="#000"
+                  fillOpacity={0.8}
+                />
+              </BarChart>
             </ResponsiveContainer>
           </TabsContent>
           
