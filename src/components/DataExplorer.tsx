@@ -2,8 +2,19 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart, LineChart } from '@/components/ui/chart';
+import { ChartContainer } from '@/components/ui/chart';
 import { ElectricityDemand, WeatherData } from '@/lib/mockData';
+import {
+  Line,
+  LineChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts';
 
 interface DataExplorerProps {
   demandData: ElectricityDemand[];
@@ -74,14 +85,15 @@ const DataExplorer: React.FC<DataExplorerProps> = ({ demandData, weatherData, ci
                 <CardDescription>Electricity demand over time</CardDescription>
               </CardHeader>
               <CardContent className="h-[300px]">
-                <LineChart
-                  data={demandChartData}
-                  categories={['value']}
-                  index="date"
-                  colors={['#0066CC']}
-                  valueFormatter={(value) => `${value.toLocaleString()} kWh`}
-                  showLegend={false}
-                />
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={demandChartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip formatter={(value: number) => [`${value.toLocaleString()} kWh`, 'Demand']} />
+                    <Line type="monotone" dataKey="value" stroke="#0066CC" />
+                  </LineChart>
+                </ResponsiveContainer>
               </CardContent>
             </Card>
           </TabsContent>
@@ -94,14 +106,15 @@ const DataExplorer: React.FC<DataExplorerProps> = ({ demandData, weatherData, ci
                   <CardDescription>Average daily temperature</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[200px]">
-                  <LineChart
-                    data={temperatureChartData}
-                    categories={['value']}
-                    index="date"
-                    colors={['#E6B64C']}
-                    valueFormatter={(value) => `${value.toFixed(1)}°F`}
-                    showLegend={false}
-                  />
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={temperatureChartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" />
+                      <YAxis />
+                      <Tooltip formatter={(value: number) => [`${value.toFixed(1)}°F`, 'Temperature']} />
+                      <Line type="monotone" dataKey="value" stroke="#E6B64C" />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
               
@@ -111,14 +124,15 @@ const DataExplorer: React.FC<DataExplorerProps> = ({ demandData, weatherData, ci
                   <CardDescription>Average daily humidity</CardDescription>
                 </CardHeader>
                 <CardContent className="h-[200px]">
-                  <LineChart
-                    data={humidityChartData}
-                    categories={['value']}
-                    index="date"
-                    colors={['#8B9CC2']}
-                    valueFormatter={(value) => `${value.toFixed(1)}%`}
-                    showLegend={false}
-                  />
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={humidityChartData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" />
+                      <YAxis />
+                      <Tooltip formatter={(value: number) => [`${value.toFixed(1)}%`, 'Humidity']} />
+                      <Line type="monotone" dataKey="value" stroke="#8B9CC2" />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
             </div>
@@ -131,14 +145,15 @@ const DataExplorer: React.FC<DataExplorerProps> = ({ demandData, weatherData, ci
                 <CardDescription>Average demand by hour of day</CardDescription>
               </CardHeader>
               <CardContent className="h-[300px]">
-                <BarChart
-                  data={hourlyDemandAvg}
-                  categories={['demand']}
-                  index="hour"
-                  colors={['#4DA6FF']}
-                  valueFormatter={(value) => `${value.toLocaleString()} kWh`}
-                  showLegend={false}
-                />
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={hourlyDemandAvg}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="hour" />
+                    <YAxis />
+                    <Tooltip formatter={(value: number) => [`${value.toLocaleString()} kWh`, 'Demand']} />
+                    <Bar dataKey="demand" fill="#4DA6FF" />
+                  </BarChart>
+                </ResponsiveContainer>
               </CardContent>
             </Card>
           </TabsContent>

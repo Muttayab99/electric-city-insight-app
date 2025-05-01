@@ -71,6 +71,12 @@ const ForecastPlot: React.FC<ForecastPlotProps> = ({ forecastData, cityName }) =
     ? processedData 
     : processedData.filter(d => d.model === model);
 
+  // Helper function to determine bar color based on error
+  const getErrorColor = (d: any) => {
+    const error = (d.predicted || 0) - (d.actual || 0);
+    return error > 0 ? "#f87171" : "#60a5fa";
+  };
+
   return (
     <Card className="animate-fade-in">
       <CardHeader>
@@ -211,14 +217,19 @@ const ForecastPlot: React.FC<ForecastPlotProps> = ({ forecastData, cityName }) =
                 />
                 <Legend />
                 
-                <Bar 
-                  dataKey={(d) => ((d.predicted || 0) - (d.actual || 0))} 
-                  name="Error" 
-                  fill={(d) => {
-                    const error = (d.predicted || 0) - (d.actual || 0);
-                    return error > 0 ? '#f87171' : '#60a5fa';
-                  }}
-                />
+                {historicalData.map((entry, index) => {
+                  const error = (entry.predicted || 0) - (entry.actual || 0);
+                  const fillColor = error > 0 ? "#f87171" : "#60a5fa";
+                  return (
+                    <Bar 
+                      key={index}
+                      dataKey={(d) => ((d.predicted || 0) - (d.actual || 0))} 
+                      name="Error" 
+                      fill={fillColor}
+                      data={[entry]}
+                    />
+                  );
+                })}
               </ComposedChart>
             </ResponsiveContainer>
           </TabsContent>
