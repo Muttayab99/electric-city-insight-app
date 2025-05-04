@@ -44,12 +44,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                 <SelectValue placeholder="Select model" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="arima">ARIMA</SelectItem>
-                <SelectItem value="xgboost">XGBoost</SelectItem>
-                <SelectItem value="lstm">LSTM</SelectItem>
-                <SelectItem value="linear">Linear Regression</SelectItem>
-                <SelectItem value="polynomial">Polynomial Regression</SelectItem>
-                <SelectItem value="random_forest">Random Forest</SelectItem>
+                <SelectItem value="ARIMA">ARIMA</SelectItem>
+                <SelectItem value="XGBoost">XGBoost</SelectItem>
+                <SelectItem value="LSTM">LSTM</SelectItem>
+                <SelectItem value="Linear">Linear Regression</SelectItem>
+                <SelectItem value="Polynomial">Polynomial Regression</SelectItem>
+                <SelectItem value="Random_Forest">Random Forest</SelectItem>
                 <SelectItem value="ensemble">Ensemble</SelectItem>
               </SelectContent>
             </Select>
