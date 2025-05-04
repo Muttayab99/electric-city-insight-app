@@ -23,39 +23,67 @@ interface DataExplorerProps {
 }
 
 const DataExplorer: React.FC<DataExplorerProps> = ({ demandData, weatherData, cityName }) => {
-  // Process data for charts
+  // Process data for charts - with null checks
   const processTimeSeries = (data: (ElectricityDemand | WeatherData)[], key: string) => {
+    // Ensure data is an array before processing
+    if (!Array.isArray(data) || data.length === 0) {
+      return [];
+    }
+    
     // Group by day for readability
     const groupedByDay = data.reduce<Record<string, any[]>>((acc, item) => {
+      if (!item || typeof item.timestamp !== 'string') return acc;
+      
       const date = new Date(item.timestamp).toLocaleDateString();
       if (!acc[date]) acc[date] = [];
-      acc[date].push(item);
+      
+      // Only add the item if it has the key we're looking for
+      if (key in item) {
+        acc[date].push(item);
+      }
       return acc;
     }, {});
     
     // Calculate daily averages
     return Object.entries(groupedByDay).map(([date, items]) => {
-      const sum = items.reduce((acc, item) => acc + (item as any)[key], 0);
+      // If no items have the key or there are no items, return a default value
+      if (items.length === 0) {
+        return { date, value: 0 };
+      }
+      
+      const sum = items.reduce((acc, item) => {
+        const val = (item as any)[key];
+        // Only add to sum if the value exists and is a number
+        return acc + (typeof val === 'number' ? val : 0);
+      }, 0);
+      
       return {
         date,
-        value: sum / items.length
+        value: items.length > 0 ? sum / items.length : 0
       };
     });
   };
   
-  const demandChartData = processTimeSeries(demandData, 'demand');
-  const temperatureChartData = processTimeSeries(weatherData, 'temperature');
-  const humidityChartData = processTimeSeries(weatherData, 'humidity');
+  // Apply null checks before processing data
+  const demandChartData = Array.isArray(demandData) ? processTimeSeries(demandData, 'demand') : [];
+  const temperatureChartData = Array.isArray(weatherData) ? processTimeSeries(weatherData, 'temperature') : [];
+  const humidityChartData = Array.isArray(weatherData) ? processTimeSeries(weatherData, 'humidity') : [];
   
-  // Process for hourly pattern
+  // Process for hourly pattern with null checks
   const hourlyDemand = Array(24).fill(0);
   const hourlyDemandCounts = Array(24).fill(0);
   
-  demandData.forEach(item => {
-    const hour = new Date(item.timestamp).getHours();
-    hourlyDemand[hour] += item.demand;
-    hourlyDemandCounts[hour]++;
-  });
+  if (Array.isArray(demandData)) {
+    demandData.forEach(item => {
+      if (!item || typeof item.timestamp !== 'string' || typeof item.demand !== 'number') return;
+      
+      const hour = new Date(item.timestamp).getHours();
+      if (hour >= 0 && hour < 24) {
+        hourlyDemand[hour] += item.demand;
+        hourlyDemandCounts[hour]++;
+      }
+    });
+  }
   
   const hourlyDemandAvg = hourlyDemand.map((total, index) => ({
     hour: index,
