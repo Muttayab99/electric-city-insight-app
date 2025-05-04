@@ -21,7 +21,7 @@ import {
 import { Calendar } from 'lucide-react';
 
 interface ControlPanelProps {
-  onRefresh: () => void;
+  onRefresh: (params: any) => void;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({ 
@@ -52,7 +52,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     console.log('Analysis parameters:', params);
     
     // Call the parent's refresh handler with the parameters
-    onRefresh();
+    onRefresh(params);
   };
   
   return (

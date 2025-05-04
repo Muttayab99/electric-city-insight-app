@@ -43,16 +43,19 @@ const Index = () => {
   };
   
   // Handle refresh request
-  const handleRefresh = () => {
+  const handleRefresh = (params: any) => {
     setLoading(true);
     toast.info("Refreshing data analysis...");
+    
+    // Update model parameters with the received params
+    setModelParams(params || modelParams);
     
     // Simulate processing with updated parameters
     setTimeout(() => {
       const data = getCityData(selectedCity);
       setCityData(data);
       setLoading(false);
-      toast.success("Analysis complete!");
+      toast.success("Analysis complete with " + params.model + " model!");
     }, 1000);
   };
   
@@ -122,6 +125,7 @@ const Index = () => {
                   <ForecastPlot 
                     forecastData={cityData.forecastData}
                     cityName={getCityDisplayName()}
+                    selectedModel={modelParams.model}
                   />
                 </TabsContent>
               </Tabs>
@@ -154,6 +158,7 @@ const Index = () => {
               <ForecastPlot 
                 forecastData={cityData.forecastData}
                 cityName={getCityDisplayName()}
+                selectedModel={modelParams.model}
               />
             </div>
             

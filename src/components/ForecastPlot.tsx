@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ForecastData } from '@/lib/mockData';
@@ -8,7 +9,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   Legend,
   ResponsiveContainer,
   Area,
@@ -28,10 +29,23 @@ import {
 interface ForecastPlotProps {
   forecastData: ForecastData[];
   cityName: string;
+  selectedModel?: string;
 }
 
-const ForecastPlot: React.FC<ForecastPlotProps> = ({ forecastData, cityName }) => {
-  const [model, setModel] = useState<string>('ensemble');
+const ForecastPlot: React.FC<ForecastPlotProps> = ({ 
+  forecastData, 
+  cityName,
+  selectedModel = 'ensemble'
+}) => {
+  const [model, setModel] = useState<string>(selectedModel);
+  
+  // Update model when selected model changes from props
+  useEffect(() => {
+    if (selectedModel && selectedModel !== model) {
+      setModel(selectedModel);
+      console.log('Model updated from props:', selectedModel);
+    }
+  }, [selectedModel]);
   
   // Process data for chart display
   const processedData = forecastData.map(item => {
@@ -49,6 +63,10 @@ const ForecastPlot: React.FC<ForecastPlotProps> = ({ forecastData, cityName }) =
   const availableModels = [...new Set(processedData.map(d => d.model))];
   console.log('Available models in data:', availableModels);
   console.log('Currently selected model:', model);
+  
+  // Filter data by selected model - FIXING FILTERING ISSUE HERE
+  const filteredData = processedData.filter(d => d.model === model);
+  console.log(`Filtered data for model ${model}: ${filteredData.length} points`);
   
   // Calculate error metrics
   const historicalData = processedData.filter(d => d.actual !== null);
@@ -75,11 +93,6 @@ const ForecastPlot: React.FC<ForecastPlotProps> = ({ forecastData, cityName }) =
   };
   
   const metrics = calculateMetrics();
-  
-  // Filter data by selected model - FIXING FILTERING ISSUE HERE
-  const filteredData = processedData.filter(d => d.model === model);
-
-  console.log(`Filtered data for model ${model}: ${filteredData.length} points`);
   
   // Verify we have data for each timestamp (for debugging)
   const uniqueTimestamps = [...new Set(filteredData.map(d => d.timestamp))];
