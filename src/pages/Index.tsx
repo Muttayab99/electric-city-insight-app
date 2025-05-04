@@ -14,6 +14,16 @@ const Index = () => {
   const [selectedCity, setSelectedCity] = useState('nyc');
   const [cityData, setCityData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [modelParams, setModelParams] = useState({
+    model: 'ensemble',
+    horizon: 24,
+    features: {
+      temperature: true,
+      humidity: true,
+      wind: true,
+      timeOfDay: true
+    }
+  });
   
   // Load data for the selected city
   useEffect(() => {
@@ -37,7 +47,7 @@ const Index = () => {
     setLoading(true);
     toast.info("Refreshing data analysis...");
     
-    // Simulate processing
+    // Simulate processing with updated parameters
     setTimeout(() => {
       const data = getCityData(selectedCity);
       setCityData(data);

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -46,7 +45,9 @@ const ForecastPlot: React.FC<ForecastPlotProps> = ({ forecastData, cityName }) =
     };
   });
   
-  console.log('Available models in data:', [...new Set(processedData.map(d => d.model))]);
+  // Log available models for debugging
+  const availableModels = [...new Set(processedData.map(d => d.model))];
+  console.log('Available models in data:', availableModels);
   console.log('Currently selected model:', model);
   
   // Calculate error metrics
@@ -55,10 +56,8 @@ const ForecastPlot: React.FC<ForecastPlotProps> = ({ forecastData, cityName }) =
   const calculateMetrics = () => {
     if (historicalData.length === 0) return { mae: 0, rmse: 0, mape: 0 };
     
-    // Filter historical data by selected model first
-    const filteredHistorical = model === 'ensemble' 
-      ? historicalData 
-      : historicalData.filter(d => d.model === model);
+    // Filter historical data by selected model
+    const filteredHistorical = historicalData.filter(d => d.model === model);
     
     if (filteredHistorical.length === 0) return { mae: 0, rmse: 0, mape: 0 };
     
@@ -77,13 +76,8 @@ const ForecastPlot: React.FC<ForecastPlotProps> = ({ forecastData, cityName }) =
   
   const metrics = calculateMetrics();
   
-  // Filter data by selected model - FIX: This is where the issue was
-  // We need to properly filter by model name
-  const filteredData = processedData.filter(d => {
-    // Special handling for 'ensemble' to avoid confusion with the model name
-    if (model === 'ensemble') return d.model === 'ensemble';
-    return d.model === model;
-  });
+  // Filter data by selected model - FIXING FILTERING ISSUE HERE
+  const filteredData = processedData.filter(d => d.model === model);
 
   console.log(`Filtered data for model ${model}: ${filteredData.length} points`);
   
@@ -98,7 +92,7 @@ const ForecastPlot: React.FC<ForecastPlotProps> = ({ forecastData, cityName }) =
 
   // Prepare error data for the bar chart - also filter by selected model
   const errorData = historicalData
-    .filter(item => model === 'ensemble' ? item.model === 'ensemble' : item.model === model)
+    .filter(item => item.model === model)
     .map(item => {
       const error = (item.predicted || 0) - (item.actual || 0);
       return {
