@@ -170,6 +170,7 @@ export const generateMockClusterData = (city: string, clusterCount: number = 4):
 export const generateMockForecastData = (city: string): ForecastData[] => {
   const data: ForecastData[] = [];
   const now = new Date();
+  const models = ['ARIMA', 'XGBoost', 'LSTM', 'ensemble'];
   
   // Historical data (with actuals and predictions)
   for (let hour = -72; hour < 0; hour++) {
@@ -178,14 +179,26 @@ export const generateMockForecastData = (city: string): ForecastData[] => {
     
     const baseValue = 500 + Math.sin((hour + 24) * Math.PI / 12) * 300;
     const actual = baseValue + (Math.random() * 100 - 50);
-    const predicted = actual * (1 + (Math.random() * 0.2 - 0.1)); // Up to ±10% error
     
-    data.push({
-      timestamp: date.toISOString(),
-      actual: Number(actual.toFixed(2)),
-      predicted: Number(predicted.toFixed(2)),
-      city,
-      model: Math.random() > 0.5 ? 'ARIMA' : 'LSTM'
+    // Create a prediction for each model
+    models.forEach(model => {
+      // Different models have slightly different error characteristics
+      let errorFactor = 0.1; // Default 10% error range
+      
+      if (model === 'ARIMA') errorFactor = 0.12;
+      else if (model === 'XGBoost') errorFactor = 0.09;
+      else if (model === 'LSTM') errorFactor = 0.08;
+      else if (model === 'ensemble') errorFactor = 0.07;
+      
+      const predicted = actual * (1 + (Math.random() * 2 * errorFactor - errorFactor)); 
+      
+      data.push({
+        timestamp: date.toISOString(),
+        actual: Number(actual.toFixed(2)),
+        predicted: Number(predicted.toFixed(2)),
+        city,
+        model
+      });
     });
   }
   
@@ -195,14 +208,36 @@ export const generateMockForecastData = (city: string): ForecastData[] => {
     date.setHours(now.getHours() + hour);
     
     const baseValue = 500 + Math.sin((hour + 24) * Math.PI / 12) * 300;
-    const predicted = baseValue + (Math.random() * 100 - 50);
     
-    data.push({
-      timestamp: date.toISOString(),
-      actual: null,
-      predicted: Number(predicted.toFixed(2)),
-      city,
-      model: Math.random() > 0.5 ? 'ARIMA' : 'LSTM'
+    // Create a prediction for each model with different patterns
+    models.forEach(model => {
+      let variationFactor = 1.0;
+      let predicted;
+      
+      if (model === 'ARIMA') {
+        // ARIMA tends to follow the pattern more closely but with some noise
+        variationFactor = 0.8;
+        predicted = baseValue + (Math.random() * 100 - 50) * variationFactor;
+      } else if (model === 'XGBoost') {
+        // XGBoost might be more accurate for certain patterns
+        variationFactor = 0.7;
+        predicted = baseValue + (Math.sin(hour * 0.5) * 50) + (Math.random() * 80 - 40) * variationFactor;
+      } else if (model === 'LSTM') {
+        // LSTM might capture longer-term dependencies
+        variationFactor = 0.6;
+        predicted = baseValue + (Math.cos(hour * 0.3) * 70) + (Math.random() * 60 - 30) * variationFactor;
+      } else {
+        // Ensemble is the average of other models plus a small smoothing factor
+        predicted = baseValue + (Math.random() * 50 - 25) * 0.5;
+      }
+      
+      data.push({
+        timestamp: date.toISOString(),
+        actual: null,
+        predicted: Number(predicted.toFixed(2)),
+        city,
+        model
+      });
     });
   }
   

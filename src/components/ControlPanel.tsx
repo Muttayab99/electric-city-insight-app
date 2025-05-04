@@ -44,7 +44,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                 <SelectValue placeholder="Select model" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="arima">ARIMA/SARIMA</SelectItem>
+                <SelectItem value="arima">ARIMA</SelectItem>
                 <SelectItem value="xgboost">XGBoost</SelectItem>
                 <SelectItem value="lstm">LSTM</SelectItem>
                 <SelectItem value="ensemble">Ensemble</SelectItem>
