@@ -9,6 +9,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from '@/components/ui/command';
 import {
   Popover,
@@ -45,27 +46,29 @@ const CitySelector: React.FC<CitySelectorProps> = ({
       <PopoverContent className="w-full md:w-[200px] p-0">
         <Command>
           <CommandInput placeholder="Search city..." />
-          <CommandEmpty>No city found.</CommandEmpty>
-          <CommandGroup>
-            {cities.map((city) => (
-              <CommandItem
-                key={city.id}
-                value={city.id}
-                onSelect={(currentValue) => {
-                  onSelectCity(currentValue);
-                  setOpen(false);
-                }}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    selectedCity === city.id ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                {city.name}, {city.state}
-              </CommandItem>
-            ))}
-          </CommandGroup>
+          <CommandList>
+            <CommandEmpty>No city found.</CommandEmpty>
+            <CommandGroup>
+              {cities.map((city) => (
+                <CommandItem
+                  key={city.id}
+                  value={city.id}
+                  onSelect={(currentValue) => {
+                    onSelectCity(currentValue);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      selectedCity === city.id ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {city.name}, {city.state}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
