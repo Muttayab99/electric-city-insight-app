@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -108,6 +107,9 @@ const ForecastPlot: React.FC<ForecastPlotProps> = ({ forecastData, cityName }) =
                 <SelectItem value="ARIMA">ARIMA</SelectItem>
                 <SelectItem value="XGBoost">XGBoost</SelectItem>
                 <SelectItem value="LSTM">LSTM</SelectItem>
+                <SelectItem value="Linear">Linear Regression</SelectItem>
+                <SelectItem value="Polynomial">Polynomial Regression</SelectItem>
+                <SelectItem value="Random_Forest">Random Forest</SelectItem>
               </SelectContent>
             </Select>
           </div>

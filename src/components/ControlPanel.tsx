@@ -47,6 +47,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                 <SelectItem value="arima">ARIMA</SelectItem>
                 <SelectItem value="xgboost">XGBoost</SelectItem>
                 <SelectItem value="lstm">LSTM</SelectItem>
+                <SelectItem value="linear">Linear Regression</SelectItem>
+                <SelectItem value="polynomial">Polynomial Regression</SelectItem>
+                <SelectItem value="random_forest">Random Forest</SelectItem>
                 <SelectItem value="ensemble">Ensemble</SelectItem>
               </SelectContent>
             </Select>

@@ -170,7 +170,7 @@ export const generateMockClusterData = (city: string, clusterCount: number = 4):
 export const generateMockForecastData = (city: string): ForecastData[] => {
   const data: ForecastData[] = [];
   const now = new Date();
-  const models = ['ARIMA', 'XGBoost', 'LSTM', 'ensemble'];
+  const models = ['ARIMA', 'XGBoost', 'LSTM', 'Linear', 'Polynomial', 'Random_Forest', 'ensemble'];
   
   // Historical data (with actuals and predictions)
   for (let hour = -72; hour < 0; hour++) {
@@ -188,6 +188,9 @@ export const generateMockForecastData = (city: string): ForecastData[] => {
       if (model === 'ARIMA') errorFactor = 0.12;
       else if (model === 'XGBoost') errorFactor = 0.09;
       else if (model === 'LSTM') errorFactor = 0.08;
+      else if (model === 'Linear') errorFactor = 0.11;
+      else if (model === 'Polynomial') errorFactor = 0.095;
+      else if (model === 'Random_Forest') errorFactor = 0.085;
       else if (model === 'ensemble') errorFactor = 0.07;
       
       const predicted = actual * (1 + (Math.random() * 2 * errorFactor - errorFactor)); 
@@ -226,6 +229,18 @@ export const generateMockForecastData = (city: string): ForecastData[] => {
         // LSTM might capture longer-term dependencies
         variationFactor = 0.6;
         predicted = baseValue + (Math.cos(hour * 0.3) * 70) + (Math.random() * 60 - 30) * variationFactor;
+      } else if (model === 'Linear') {
+        // Linear regression tends to be simpler with more consistent error
+        variationFactor = 0.75;
+        predicted = baseValue + (Math.random() * 90 - 45) * variationFactor;
+      } else if (model === 'Polynomial') {
+        // Polynomial regression better fits curves but can overfit
+        variationFactor = 0.65;
+        predicted = baseValue + (Math.sin(hour * 0.7) * 60) + (Math.random() * 70 - 35) * variationFactor;
+      } else if (model === 'Random_Forest') {
+        // Random Forest is often accurate but can have step-like predictions
+        variationFactor = 0.68;
+        predicted = baseValue + (Math.floor(hour/4) * 10) + (Math.random() * 65 - 32.5) * variationFactor;
       } else {
         // Ensemble is the average of other models plus a small smoothing factor
         predicted = baseValue + (Math.random() * 50 - 25) * 0.5;
